@@ -258,19 +258,39 @@ export class Cal {
     element.appendChild(template.content);
   }
 
-  floatingButton({ calLink }: { calLink: string }) {
-    validate(arguments[0], {
-      required: true,
-      props: {
-        calLink: {
-          required: true,
-          type: "string",
-        },
-      },
-    });
-    const template = document.createElement("template");
-    template.innerHTML = `<cal-floating-button data-cal-namespace="${this.namespace}" data-cal-link="${calLink}"></cal-floating-button>`;
-    document.body.appendChild(template.content);
+  floatingButton({
+    calLink,
+    buttonText,
+    attributes,
+  }: {
+    calLink: string;
+    buttonText?: string;
+    attributes?: Record<string, string>;
+  }) {
+    // validate(arguments[0], {
+    //   required: true,
+    //   props: {
+    //     calLink: {
+    //       required: true,
+    //       type: "string",
+    //     },
+    //   },
+    // });
+    let attributesString = "";
+    let existingEl = null;
+    if (attributes?.id) {
+      attributesString += ` id="${attributes.id}"`;
+      existingEl = document.getElementById(attributes.id);
+    }
+    if (!existingEl) {
+      const template = document.createElement("template");
+      template.innerHTML = `<cal-floating-button ${attributesString} data-button-text=${buttonText} data-cal-namespace="${this.namespace}" data-cal-link="${calLink}"></cal-floating-button>`;
+      document.body.appendChild(template.content);
+    } else {
+      if (buttonText) {
+        existingEl.setAttribute("data-button-text", buttonText);
+      }
+    }
   }
 
   modal({ calLink, config = {}, uid }: { calLink: string; config?: Record<string, string>; uid: number }) {
